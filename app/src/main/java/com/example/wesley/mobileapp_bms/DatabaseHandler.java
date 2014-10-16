@@ -22,10 +22,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             TABLE_CONTACTS = "contacts",
             KEY_ID = "id",
             KEY_DESC = "desc",
-            KEY_LNAME = "lname",
-            KEY_PHONE = "phone",
-            KEY_EMAIL = "email",
-            KEY_ADDRESS = "address",
+            KEY_SIZE = "size",
+            KEY_PRICE = "price",
+            KEY_QUANTITY = "quantity",
+            KEY_LOCATION = "location",
             KEY_IMAGEURI = "imageUri";
 
     public DatabaseHandler(Context context) {
@@ -35,7 +35,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE " + TABLE_CONTACTS + "(" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_DESC + " TEXT," + KEY_LNAME + " TEXT," + KEY_PHONE + " TEXT," + KEY_EMAIL + " TEXT," + KEY_ADDRESS + " TEXT," + KEY_IMAGEURI + " TEXT)");
+        db.execSQL("CREATE TABLE " + TABLE_CONTACTS + "(" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_DESC + " TEXT," + KEY_SIZE + " TEXT," + KEY_PRICE + " TEXT," + KEY_QUANTITY + " TEXT," + KEY_LOCATION + " TEXT," + KEY_IMAGEURI + " TEXT)");
     }
 
     @Override
@@ -51,10 +51,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
 
         values.put(KEY_DESC, info.getDesc());
-        values.put(KEY_LNAME, info.getLName());
-        values.put(KEY_PHONE, info.getPhone());
-        values.put(KEY_EMAIL, info.getEmail());
-        values.put(KEY_ADDRESS, info.getAddress());
+        values.put(KEY_SIZE, info.getSize());
+        values.put(KEY_PRICE, info.getPrice());
+        values.put(KEY_QUANTITY, info.getquantity());
+        values.put(KEY_LOCATION, info.getLocation());
         values.put(KEY_IMAGEURI, info.getImageURI().toString());
 
         db.insert(TABLE_CONTACTS, null, values);
@@ -64,7 +64,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     public Info getContact(int id) {
         SQLiteDatabase db = getReadableDatabase();
 
-        Cursor cursor = db.query(TABLE_CONTACTS, new String[] { KEY_ID, KEY_DESC, KEY_LNAME, KEY_PHONE, KEY_EMAIL, KEY_ADDRESS, KEY_IMAGEURI }, KEY_ID + "=?", new String[] { String.valueOf(id) }, null, null, null, null );
+        Cursor cursor = db.query(TABLE_CONTACTS, new String[] { KEY_ID, KEY_DESC, KEY_SIZE, KEY_PRICE, KEY_QUANTITY, KEY_LOCATION, KEY_IMAGEURI }, KEY_ID + "=?", new String[] { String.valueOf(id) }, null, null, null, null );
 
         if (cursor != null)
             cursor.moveToFirst();
@@ -97,10 +97,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         ContentValues values = new ContentValues();
 
         values.put(KEY_DESC, info.getDesc());
-        values.put(KEY_LNAME, info.getLName());
-        values.put(KEY_PHONE, info.getPhone());
-        values.put(KEY_EMAIL, info.getEmail());
-        values.put(KEY_ADDRESS, info.getAddress());
+        values.put(KEY_SIZE, info.getSize());
+        values.put(KEY_PRICE, info.getPrice());
+        values.put(KEY_QUANTITY, info.getquantity());
+        values.put(KEY_LOCATION, info.getLocation());
         values.put(KEY_IMAGEURI, info.getImageURI().toString());
 
         int rowsAffected = db.update(TABLE_CONTACTS, values, KEY_ID + "=?", new String[] { String.valueOf(info.getId()) });

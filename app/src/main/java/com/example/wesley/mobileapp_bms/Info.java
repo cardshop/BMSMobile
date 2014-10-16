@@ -7,17 +7,17 @@ import android.net.Uri;
  */
 public class Info {
 
-    private String _desc, _lname, _phone, _email, _address;
+    private String _desc, _size, _price, _quantity, _location;
     private Uri _imageURI;
     private int _id;
 
-    public Info(int id, String fname, String lname, String phone, String email, String address, Uri imageURI) {
+    public Info(int id, String desc, String size, String price, String quantity, String location, Uri imageURI) {
         _id = id;
-        _desc = fname;
-        _lname = lname;
-        _phone = phone;
-        _email = email;
-        _address = address;
+        _desc = desc;
+        _size = size;
+        _price = price;
+        _quantity = quantity;
+        _location = location;
         _imageURI = imageURI;
     }
 
@@ -27,20 +27,20 @@ public class Info {
         return _desc;
     }
 
-    public String getLName() {
-        return _lname;
+    public String getSize() {
+        return _size;
     }
 
-    public String getPhone() {
-        return _phone;
+    public String getPrice() {
+        return _price;
     }
 
-    public String getEmail() {
-        return _email;
+    public String getquantity() {
+        return _quantity;
     }
 
-    public String getAddress() {
-        return _address;
+    public String getLocation() {
+        return _location;
     }
 
     public Uri getImageURI() { return _imageURI; }
