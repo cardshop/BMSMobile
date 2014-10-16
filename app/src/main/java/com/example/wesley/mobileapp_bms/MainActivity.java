@@ -34,7 +34,7 @@ public class MainActivity extends Activity  {
 
 
 
-    EditText descTxt, lnameTxt, phoneTxt, emailTxt, addressTxt;
+    EditText descTxt, sizeTxt, priceTxt, quantityTxt, locationTxt;
     ImageView contactImageImgView;
     List<Info> infos = new ArrayList<Info>();
     ListView contactListView;
@@ -62,10 +62,10 @@ public class MainActivity extends Activity  {
         final String[] decor = {"Decorations","Paper","Ink"};
 
         descTxt = (EditText) findViewById(R.id.txtDesc);
-        lnameTxt = (EditText) findViewById(R.id.txtLastName);
-        phoneTxt = (EditText) findViewById(R.id.txtPhone);
-        emailTxt = (EditText) findViewById(R.id.txtEmail);
-        addressTxt = (EditText) findViewById(R.id.txtAddress);
+        sizeTxt = (EditText) findViewById(R.id.txtSize);
+        priceTxt = (EditText) findViewById(R.id.txtPrice);
+        quantityTxt = (EditText) findViewById(R.id.txtQuantity);
+        locationTxt = (EditText) findViewById(R.id.txtLocation);
         contactListView = (ListView) findViewById(R.id.listView);
         contactImageImgView = (ImageView) findViewById(R.id.imgViewContactImage);
         dbHandler = new DatabaseHandler(getApplicationContext());
@@ -119,14 +119,14 @@ public class MainActivity extends Activity  {
                 }
 
 
-                info = new Info(dbHandler.getContactsCount(), String.valueOf(descTxt.getText()), String.valueOf(lnameTxt.getText()), String.valueOf(phoneTxt.getText()), String.valueOf(emailTxt.getText()), String.valueOf(addressTxt.getText()), imageUri);
+                info = new Info(dbHandler.getContactsCount(), String.valueOf(descTxt.getText()), String.valueOf(sizeTxt.getText()), String.valueOf(priceTxt.getText()), String.valueOf(quantityTxt.getText()), String.valueOf(locationTxt.getText()), imageUri);
 
-
+                //Will have to get rid of this if condition
                 if (!contactExists(info)) {
 
                     dbHandler.createContact(info);
                     infos.add(info);
-                    Toast.makeText(getApplicationContext(), String.valueOf(descTxt.getText()) + " has been added to your infos!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), String.valueOf(descTxt.getText()) + " has been added to your list!", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 Toast.makeText(getApplicationContext(), String.valueOf(descTxt.getText()) + " already exists. Please use a different name.", Toast.LENGTH_SHORT).show();
@@ -141,10 +141,10 @@ public class MainActivity extends Activity  {
 
                 Info c =  infos.get(position);
                 String desc = c.getDesc();
-                String lname = c.getLName();
-                final String phone = c.getPhone();
-                String email = c.getEmail();
-                String address = c.getAddress();
+                String size = c.getSize();
+                final String price = c.getPrice();
+                String quantity = c.getquantity();
+                String location = c.getLocation();
                 Uri img = c.getImageURI();
                 // When clicked, show a toast with the TextView text
                 dlgAlert.setPositiveButton("Back",
@@ -154,14 +154,14 @@ public class MainActivity extends Activity  {
 
                             }
                         });
-                dlgAlert.setMessage("Description:  " +String.valueOf(desc)+"\n\nSize/Length: "+String.valueOf(lname)+"\n\nPrice: "+String.valueOf(phone)+"\n\nQuantity: "+String.valueOf(email)+"\n\nPurchase Location: "+String.valueOf(address));
+                dlgAlert.setMessage("Description:  " +String.valueOf(desc)+"\n\nSize/Length: "+String.valueOf(size)+"\n\nPrice: "+String.valueOf(price)+"\n\nQuantity: "+String.valueOf(quantity)+"\n\nPurchase Location: "+String.valueOf(location));
                 dlgAlert.setTitle("Item Info");
                 dlgAlert.setNegativeButton("Delete",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
 
                                 Intent callIntent = new Intent(Intent.ACTION_CALL);
-                                callIntent.setData(Uri.parse("tel:"+String.valueOf(phone)));
+                                callIntent.setData(Uri.parse("tel:"+String.valueOf(price)));
                                 startActivity(callIntent);
 
                             }
@@ -172,7 +172,7 @@ public class MainActivity extends Activity  {
                             public void onClick(DialogInterface dialog, int id) {
 
                                 Intent callIntent = new Intent(Intent.ACTION_CALL);
-                                callIntent.setData(Uri.parse("tel:"+String.valueOf(phone)));
+                                callIntent.setData(Uri.parse("tel:"+String.valueOf(price)));
                                 startActivity(callIntent);
 
                             }
@@ -300,10 +300,10 @@ public class MainActivity extends Activity  {
 
             Info currentInfo = infos.get(position);
 
-            TextView name = (TextView) view.findViewById(R.id.txtLastNameList);
-            name.setText(currentInfo.getLName());
-            TextView phone = (TextView) view.findViewById(R.id.phoneNumber);
-            phone.setText(currentInfo.getPhone());
+            TextView size = (TextView) view.findViewById(R.id.txtSizeList);
+            size.setText(currentInfo.getSize());
+            TextView price = (TextView) view.findViewById(R.id.priceList);
+            price.setText(currentInfo.getPrice());
 
             ImageView ivContactImage = (ImageView) view.findViewById(R.id.ivContactImage);
             ivContactImage.setImageURI(currentInfo.getImageURI());
