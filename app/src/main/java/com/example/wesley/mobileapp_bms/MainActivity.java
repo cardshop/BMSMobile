@@ -60,7 +60,7 @@ public class MainActivity extends Activity  {
         setContentView(R.layout.activity_main);
 
         final String[] decor = {"Decorations","Paper","Ink"};
-        //OBJECTS
+
         descTxt = (EditText) findViewById(R.id.txtDesc);
         sizeTxt = (EditText) findViewById(R.id.txtSize);
         priceTxt = (EditText) findViewById(R.id.txtPrice);
