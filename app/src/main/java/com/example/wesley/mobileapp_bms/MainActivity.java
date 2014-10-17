@@ -40,8 +40,7 @@ public class MainActivity extends Activity  {
     ListView contactListView;
     Uri imageUri = Uri.parse("android.resource://org.intracode.contactmanager/drawable/unknown");
     DatabaseHandler dbHandler;
-    Uri wesImg = Uri.parse("android.resource://org.intracode.contactmanager/drawable/wesleyimage");
-    Uri dadImg = Uri.parse("android.resource://org.intracode.contactmanager/drawable/dadimg");
+    ArrayAdapter<Info> adapter;
 
     Uri DecImg = Uri.parse("android.resource://org.intracode.contactmanager/drawable/decoration1");
     Uri PapImg = Uri.parse("android.resource://org.intracode.contactmanager/drawable/paper1");
@@ -52,13 +51,13 @@ public class MainActivity extends Activity  {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
-
         super.onCreate(savedInstanceState);
-        final AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(this);
-
         setContentView(R.layout.activity_main);
 
+
+        final AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(this);
+        final AlertDialog.Builder confirmAlert  = new AlertDialog.Builder(this);
+        final AlertDialog.Builder delAlert  = new AlertDialog.Builder(this);
         final String[] decor = {"Decorations","Paper","Ink"};
 
         descTxt = (EditText) findViewById(R.id.txtDesc);
@@ -121,15 +120,68 @@ public class MainActivity extends Activity  {
 
                 info = new Info(dbHandler.getContactsCount(), String.valueOf(descTxt.getText()), String.valueOf(sizeTxt.getText()), String.valueOf(priceTxt.getText()), String.valueOf(quantityTxt.getText()), String.valueOf(locationTxt.getText()), imageUri);
 
-                //Will have to get rid of this if condition
-                if (!contactExists(info)) {
+
 
                     dbHandler.createContact(info);
                     infos.add(info);
                     Toast.makeText(getApplicationContext(), String.valueOf(descTxt.getText()) + " has been added to your list!", Toast.LENGTH_SHORT).show();
-                    return;
+
+                //Send Email
+
+                confirmAlert.setPositiveButton("Yes",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+
+
+                            }
+                        });
+
+                confirmAlert.setMessage("Do you want to send a record of this via email?" );
+                confirmAlert.setTitle("Item Saved!");
+                confirmAlert.setNegativeButton("No",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+
+                            }
+                        });
+
+                confirmAlert.setCancelable(true);
+                confirmAlert.create().show();
+
+
+
+
+
+                if(rb1.isChecked())
+                {
+                    rb1.setChecked(false);
                 }
-                Toast.makeText(getApplicationContext(), String.valueOf(descTxt.getText()) + " already exists. Please use a different name.", Toast.LENGTH_SHORT).show();
+                if(rb2.isChecked())
+                {
+                    rb2.setChecked(false);
+                }
+                if(rb3.isChecked())
+                {
+                    rb3.setChecked(false);
+                }
+                descTxt.setText("");
+                sizeTxt.setText("");
+                priceTxt.setText("");
+                quantityTxt.setText("");
+                locationTxt.setText("");
+
+
+
+               // }
+
+
+
+
+
+
+
+                //Toast.makeText(getApplicationContext(), String.valueOf(descTxt.getText()) + " already exists. Please use a different name.", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -137,7 +189,7 @@ public class MainActivity extends Activity  {
 
         contactListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
+                                    final int position, long id) {
 
                 Info c =  infos.get(position);
                 String desc = c.getDesc();
@@ -160,9 +212,30 @@ public class MainActivity extends Activity  {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
 
-                                Intent callIntent = new Intent(Intent.ACTION_CALL);
-                                callIntent.setData(Uri.parse("tel:"+String.valueOf(price)));
-                                startActivity(callIntent);
+                                delAlert.setPositiveButton("Yes",
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int id) {
+                                                dbHandler.deleteContact(infos.get(position));
+                                                infos.remove(position);
+                                                adapter.notifyDataSetChanged();
+
+                                            }
+                                        });
+
+                                delAlert.setMessage("Are you sure you want to delete this item?" );
+                                delAlert.setTitle("Confirm?");
+                                delAlert.setNegativeButton("No",
+                                        new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int id) {
+                                                dialog.cancel();
+
+                                            }
+                                        });
+
+                                delAlert.setCancelable(true);
+                                delAlert.create().show();
+
+
 
                             }
                         });
@@ -216,6 +289,21 @@ public class MainActivity extends Activity  {
                 intent.setType("image/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
                 startActivityForResult(Intent.createChooser(intent, "Select Info Image"), 1);
+                RadioButton rb1 = (RadioButton)findViewById(R.id.radioButton1);
+                RadioButton rb2 = (RadioButton)findViewById(R.id.radioButton2);
+                RadioButton rb3 = (RadioButton)findViewById(R.id.radioButton3);
+                if(rb1.isChecked())
+                {
+                    rb1.setChecked(false);
+                }
+                if(rb2.isChecked())
+                {
+                    rb2.setChecked(false);
+                }
+                if(rb3.isChecked())
+                {
+                    rb3.setChecked(false);
+                }
             }
 
         });
@@ -282,7 +370,7 @@ public class MainActivity extends Activity  {
     }
 
     private void populateList() {
-        ArrayAdapter<Info> adapter = new ContactListAdapter();
+        adapter = new ContactListAdapter();
         contactListView.setAdapter(adapter);
     }
 
@@ -312,7 +400,9 @@ public class MainActivity extends Activity  {
             return view;
         }
     }
-
+    @Override
+    public void onBackPressed() {
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

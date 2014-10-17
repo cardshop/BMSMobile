@@ -26,6 +26,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             KEY_PRICE = "price",
             KEY_QUANTITY = "quantity",
             KEY_LOCATION = "location",
+            KEY_TIME = "time",
+            KEY_TYPE = "type",
             KEY_IMAGEURI = "imageUri";
 
     public DatabaseHandler(Context context) {
