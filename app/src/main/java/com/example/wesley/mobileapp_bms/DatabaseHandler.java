@@ -37,7 +37,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE " + TABLE_CONTACTS + "(" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_DESC + " TEXT," + KEY_SIZE + " TEXT," + KEY_PRICE + " TEXT," + KEY_QUANTITY + " TEXT," + KEY_LOCATION + " TEXT," + KEY_IMAGEURI + " TEXT)");
+        db.execSQL("CREATE TABLE " + TABLE_CONTACTS + "(" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT," + KEY_DESC + " TEXT," + KEY_SIZE + " TEXT," + KEY_PRICE + " TEXT," + KEY_QUANTITY + " TEXT," + KEY_LOCATION + " TEXT,"+ KEY_TIME + " TEXT," + KEY_TYPE + " TEXT,"+ KEY_IMAGEURI + " TEXT)");
     }
 
     @Override
@@ -57,6 +57,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_PRICE, info.getPrice());
         values.put(KEY_QUANTITY, info.getquantity());
         values.put(KEY_LOCATION, info.getLocation());
+        values.put(KEY_TIME, info.getTime());
+        values.put(KEY_TYPE, info.getType());
         values.put(KEY_IMAGEURI, info.getImageURI().toString());
 
         db.insert(TABLE_CONTACTS, null, values);
@@ -71,7 +73,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         if (cursor != null)
             cursor.moveToFirst();
 
-        Info info = new Info(Integer.parseInt(cursor.getString(0)), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), Uri.parse(cursor.getString(6)));
+        Info info = new Info(Integer.parseInt(cursor.getString(0)), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6), cursor.getString(7),Uri.parse(cursor.getString(8)));
         db.close();
         cursor.close();
         return info;
@@ -103,6 +105,8 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         values.put(KEY_PRICE, info.getPrice());
         values.put(KEY_QUANTITY, info.getquantity());
         values.put(KEY_LOCATION, info.getLocation());
+        values.put(KEY_TIME, info.getTime());
+        values.put(KEY_TYPE, info.getType());
         values.put(KEY_IMAGEURI, info.getImageURI().toString());
 
         int rowsAffected = db.update(TABLE_CONTACTS, values, KEY_ID + "=?", new String[] { String.valueOf(info.getId()) });
@@ -119,7 +123,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()) {
             do {
-                infos.add(new Info(Integer.parseInt(cursor.getString(0)), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), Uri.parse(cursor.getString(6))));
+                infos.add(new Info(Integer.parseInt(cursor.getString(0)), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5),cursor.getString(6), cursor.getString(7), Uri.parse(cursor.getString(8))));
             }
             while (cursor.moveToNext());
         }

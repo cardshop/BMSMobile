@@ -23,8 +23,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Last Name"
-                android:id="@+id/txtSizeList"
+                android:text="Description"
+                android:id="@+id/txtDescList"
                 android:paddingLeft="10dp"
                 android:paddingTop="15dp"
                 android:layout_gravity="left|center_vertical"/>
@@ -37,6 +37,15 @@
                 android:paddingLeft="10dp"
                 android:layout_gravity="left|center_vertical"
                 android:layout_marginTop="0dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Date"
+            android:id="@+id/DateList"
+            android:paddingLeft="10dp"
+            android:layout_gravity="left|center_vertical"
+            android:layout_marginTop="0dp"/>
 
 
 

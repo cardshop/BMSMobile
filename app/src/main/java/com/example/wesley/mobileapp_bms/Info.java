@@ -7,16 +7,19 @@ import android.net.Uri;
  */
 public class Info {
 
-    private String _desc, _size, _price, _quantity, _location;
+    private String _desc, _size, _price, _quantity, _location, _time, _type;
     private Uri _imageURI;
     private int _id;
 
-    public Info(int id, String desc, String size, String price, String quantity, String location, Uri imageURI) {
+    public Info(int id, String desc, String size, String price, String quantity, String location, String time, String type, Uri imageURI) {
         _id = id;
         _desc = desc;
         _size = size;
         _price = price;
         _quantity = quantity;
+        _location = location;
+        _time = time;
+        _type = type;
         _location = location;
         _imageURI = imageURI;
     }
@@ -41,6 +44,14 @@ public class Info {
 
     public String getLocation() {
         return _location;
+    }
+
+    public String getTime() {
+        return _time;
+    }
+
+    public String getType() {
+        return _type;
     }
 
     public Uri getImageURI() { return _imageURI; }

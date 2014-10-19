@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +27,9 @@ import android.widget.Toast;
 import com.example.wesley.mobileapp_bms.DatabaseHandler;
 import com.example.wesley.mobileapp_bms.Info;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends Activity  {
@@ -34,7 +37,7 @@ public class MainActivity extends Activity  {
 
 
 
-    EditText descTxt, sizeTxt, priceTxt, quantityTxt, locationTxt;
+    EditText descTxt, sizeTxt, priceTxt, quantityTxt, locationTxt, descEditTxt, sizeEditTxt, priceEditTxt, quantityEditTxt, locationEditTxt;
     ImageView contactImageImgView;
     List<Info> infos = new ArrayList<Info>();
     ListView contactListView;
@@ -47,8 +50,9 @@ public class MainActivity extends Activity  {
     Uri InkImg = Uri.parse("android.resource://org.intracode.contactmanager/drawable/ink");
 
     String Type = "";
+    String time = "";
 
-
+        //
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,8 +62,14 @@ public class MainActivity extends Activity  {
         final AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(this);
         final AlertDialog.Builder confirmAlert  = new AlertDialog.Builder(this);
         final AlertDialog.Builder delAlert  = new AlertDialog.Builder(this);
+        //final AlertDialog.Builder editAlert = new AlertDialog.Builder(this);
+        final AlertDialog.Builder editAlert = new AlertDialog.Builder(this);
+        // Get the layout inflater
+        final LayoutInflater inflater = this.getLayoutInflater();
+
         final String[] decor = {"Decorations","Paper","Ink"};
 
+        //Variables from activity_main
         descTxt = (EditText) findViewById(R.id.txtDesc);
         sizeTxt = (EditText) findViewById(R.id.txtSize);
         priceTxt = (EditText) findViewById(R.id.txtPrice);
@@ -69,6 +79,14 @@ public class MainActivity extends Activity  {
         contactImageImgView = (ImageView) findViewById(R.id.imgViewContactImage);
         dbHandler = new DatabaseHandler(getApplicationContext());
 
+
+        //Variables from edit_layout
+
+
+        //sizeEditTxt = (EditText) findViewById(R.id.txtSizeEdit);
+        //priceEditTxt = (EditText) findViewById(R.id.txtPriceEdit);
+        //quantityEditTxt = (EditText) findViewById(R.id.txtQuantityEdit);
+        //locationEditTxt = (EditText) findViewById(R.id.txtLocationEdit);
 
 
 
@@ -103,35 +121,63 @@ public class MainActivity extends Activity  {
                 RadioButton rb2 = (RadioButton)findViewById(R.id.radioButton2);
                 RadioButton rb3 = (RadioButton)findViewById(R.id.radioButton3);
                 Info info;
+                SimpleDateFormat s = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
+                time = s.format(new Date());
 
                 if(rb1.isChecked())
                 {
                     imageUri = DecImg;
+                    Type = "Decoration";
                 }
                 if(rb2.isChecked())
                 {
                     imageUri = PapImg;
+                    Type = "Paper";
                 }
                 if(rb3.isChecked())
                 {
                     imageUri = InkImg;
+                    Type = "Ink";
                 }
 
 
-                info = new Info(dbHandler.getContactsCount(), String.valueOf(descTxt.getText()), String.valueOf(sizeTxt.getText()), String.valueOf(priceTxt.getText()), String.valueOf(quantityTxt.getText()), String.valueOf(locationTxt.getText()), imageUri);
+                info = new Info(dbHandler.getContactsCount(), String.valueOf(descTxt.getText()), String.valueOf(sizeTxt.getText()), String.valueOf(priceTxt.getText()), String.valueOf(quantityTxt.getText()), String.valueOf(locationTxt.getText()), time, Type,  imageUri);
+                final String Desc;
+                final String Size;
+                final String Price;
+                final String Loc;
+                final String Quant;
 
+                Desc = String.valueOf(descTxt.getText());
+                Size = String.valueOf(sizeTxt.getText());
+                Price = String.valueOf(priceTxt.getText());
+                Loc = String.valueOf(locationTxt.getText());
+                Quant = String.valueOf(quantityTxt.getText());
 
 
                     dbHandler.createContact(info);
                     infos.add(info);
                     Toast.makeText(getApplicationContext(), String.valueOf(descTxt.getText()) + " has been added to your list!", Toast.LENGTH_SHORT).show();
-
+                    contactImageImgView.setImageURI(Uri.parse("android.resource://org.intracode.contactmanager/drawable/unknown"));
                 //Send Email
 
                 confirmAlert.setPositiveButton("Yes",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
+                                String to = "wesleymartins34@hotmail.com";
+                                String subject = "Item Bought: "+time;
+                                String message = "Description:  " +Desc+"\n\nSize/Length: "+Size+"\n\nPrice: R"+Price+"\n\nQuantity: "+Quant+"\n\nPurchase Location: "+Loc+"\n\nAdded Date: "+time;
 
+
+                                Intent email = new Intent(Intent.ACTION_SEND);
+                                email.putExtra(Intent.EXTRA_EMAIL, new String[] { to });
+                                email.putExtra(Intent.EXTRA_SUBJECT, subject);
+                                email.putExtra(Intent.EXTRA_TEXT, message);
+
+                                // need this to prompts email client only
+                                email.setType("message/rfc822");
+
+                                startActivity(Intent.createChooser(email, "Choose an Email client"));
 
                             }
                         });
@@ -188,15 +234,21 @@ public class MainActivity extends Activity  {
 
 
         contactListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view,
+            public void onItemClick(final AdapterView<?> parent, final View view,
                                     final int position, long id) {
 
-                Info c =  infos.get(position);
-                String desc = c.getDesc();
-                String size = c.getSize();
+                final Info c =  infos.get(position);
+                final String desc = c.getDesc();
+                final String size = c.getSize();
                 final String price = c.getPrice();
-                String quantity = c.getquantity();
-                String location = c.getLocation();
+                final String quantity = c.getquantity();
+                final String location = c.getLocation();
+                final String Time = c.getTime();
+                final String type = c.getType();
+                final String Description = String.valueOf(desc);
+
+
+
                 Uri img = c.getImageURI();
                 // When clicked, show a toast with the TextView text
                 dlgAlert.setPositiveButton("Back",
@@ -206,8 +258,8 @@ public class MainActivity extends Activity  {
 
                             }
                         });
-                dlgAlert.setMessage("Description:  " +String.valueOf(desc)+"\n\nSize/Length: "+String.valueOf(size)+"\n\nPrice: "+String.valueOf(price)+"\n\nQuantity: "+String.valueOf(quantity)+"\n\nPurchase Location: "+String.valueOf(location));
-                dlgAlert.setTitle("Item Info");
+                dlgAlert.setMessage("Description:  " +String.valueOf(desc)+"\n\nSize/Length: "+String.valueOf(size)+"\n\nPrice: R"+String.valueOf(price)+"\n\nQuantity: "+String.valueOf(quantity)+"\n\nPurchase Location: "+String.valueOf(location)+"\n\nAdded Date: "+Time);
+                dlgAlert.setTitle("Item Info: "+type);
                 dlgAlert.setNegativeButton("Delete",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
@@ -218,6 +270,7 @@ public class MainActivity extends Activity  {
                                                 dbHandler.deleteContact(infos.get(position));
                                                 infos.remove(position);
                                                 adapter.notifyDataSetChanged();
+                                                Toast.makeText(getApplicationContext(), "Successfully Deleted", Toast.LENGTH_SHORT).show();
 
                                             }
                                         });
@@ -244,12 +297,45 @@ public class MainActivity extends Activity  {
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
 
-                                Intent callIntent = new Intent(Intent.ACTION_CALL);
-                                callIntent.setData(Uri.parse("tel:"+String.valueOf(price)));
-                                startActivity(callIntent);
 
-                            }
-                        });
+
+
+                                    editAlert.setView(inflater.inflate(R.layout.edit_layout,parent,false));
+
+
+                                    editAlert.setPositiveButton("Update",
+                                            new DialogInterface.OnClickListener()
+
+                                    {
+                                        public void onClick (DialogInterface dialog,int id){
+
+
+
+                                    }
+                                    }
+
+                                    );
+
+
+                                    editAlert.setTitle("Edit");
+                                    editAlert.setNegativeButton("Cancel",
+                                            new DialogInterface.OnClickListener()
+
+                                    {
+                                        public void onClick (DialogInterface dialog,int id){
+                                        dialog.cancel();
+
+                                    }
+                                    }
+
+                                    );
+
+                                    editAlert.setCancelable(true);
+                                    editAlert.create().show();
+
+
+                                }
+                            });
                 dlgAlert.setCancelable(true);
                 dlgAlert.create().show();
 
@@ -388,10 +474,12 @@ public class MainActivity extends Activity  {
 
             Info currentInfo = infos.get(position);
 
-            TextView size = (TextView) view.findViewById(R.id.txtSizeList);
-            size.setText(currentInfo.getSize());
+            TextView descr = (TextView) view.findViewById(R.id.txtDescList);
+            descr.setText(currentInfo.getDesc());
             TextView price = (TextView) view.findViewById(R.id.priceList);
-            price.setText(currentInfo.getPrice());
+            price.setText("R"+currentInfo.getPrice());
+            TextView date = (TextView) view.findViewById(R.id.DateList);
+            date.setText(currentInfo.getTime());
 
             ImageView ivContactImage = (ImageView) view.findViewById(R.id.ivContactImage);
             ivContactImage.setImageURI(currentInfo.getImageURI());
