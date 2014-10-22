@@ -12,6 +12,8 @@
         android:id="@+id/ivContactImage" />
 
 
+
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="fill_parent"

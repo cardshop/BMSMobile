@@ -2,6 +2,8 @@ package com.example.wesley.mobileapp_bms;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -44,11 +46,11 @@ public class MainActivity extends Activity  {
     Uri imageUri = Uri.parse("android.resource://org.intracode.contactmanager/drawable/unknown");
     DatabaseHandler dbHandler;
     ArrayAdapter<Info> adapter;
-
+    final Context context = this;
     Uri DecImg = Uri.parse("android.resource://org.intracode.contactmanager/drawable/decoration1");
     Uri PapImg = Uri.parse("android.resource://org.intracode.contactmanager/drawable/paper1");
     Uri InkImg = Uri.parse("android.resource://org.intracode.contactmanager/drawable/ink");
-
+    boolean checked = false;
     String Type = "";
     String time = "";
 
@@ -78,6 +80,7 @@ public class MainActivity extends Activity  {
         contactListView = (ListView) findViewById(R.id.listView);
         contactImageImgView = (ImageView) findViewById(R.id.imgViewContactImage);
         dbHandler = new DatabaseHandler(getApplicationContext());
+
 
 
         //Variables from edit_layout
@@ -124,20 +127,37 @@ public class MainActivity extends Activity  {
                 SimpleDateFormat s = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss");
                 time = s.format(new Date());
 
+
+
                 if(rb1.isChecked())
                 {
-                    imageUri = DecImg;
+                    if(checked == false) {
+                        imageUri = DecImg;
+                    }
                     Type = "Decoration";
                 }
-                if(rb2.isChecked())
+
+
+                else if(rb2.isChecked() )
                 {
-                    imageUri = PapImg;
+                    if(checked == false) {
+                        imageUri = PapImg;
+                    }
+
                     Type = "Paper";
                 }
-                if(rb3.isChecked())
+                else if(rb3.isChecked())
                 {
-                    imageUri = InkImg;
+                    if(checked == false) {
+                        imageUri = PapImg;
+                    }
+
                     Type = "Ink";
+                }
+                else
+                {
+                    Toast.makeText(getApplicationContext(), "Please select an item type", Toast.LENGTH_SHORT).show();
+                    return;
                 }
 
 
@@ -154,11 +174,42 @@ public class MainActivity extends Activity  {
                 Loc = String.valueOf(locationTxt.getText());
                 Quant = String.valueOf(quantityTxt.getText());
 
+                if(Size.matches(""))
+                {
+                    Toast.makeText(getApplicationContext(), "Please input a size", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if(Desc.matches(""))
+                {
+                    Toast.makeText(getApplicationContext(), "Please input a description", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if(Price.matches(""))
+                {
+                    Toast.makeText(getApplicationContext(), "Please input a price", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if(Loc.matches(""))
+                {
+                    Toast.makeText(getApplicationContext(), "Please input a location", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if(Quant.matches(""))
+                {
+                    Toast.makeText(getApplicationContext(), "Please input a quantity", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
 
                     dbHandler.createContact(info);
                     infos.add(info);
                     Toast.makeText(getApplicationContext(), String.valueOf(descTxt.getText()) + " has been added to your list!", Toast.LENGTH_SHORT).show();
                     contactImageImgView.setImageURI(Uri.parse("android.resource://org.intracode.contactmanager/drawable/unknown"));
+                    checked = false;
                 //Send Email
 
                 confirmAlert.setPositiveButton("Yes",
@@ -216,7 +267,7 @@ public class MainActivity extends Activity  {
                 priceTxt.setText("");
                 quantityTxt.setText("");
                 locationTxt.setText("");
-
+                checked = false;
 
 
                // }
@@ -270,7 +321,8 @@ public class MainActivity extends Activity  {
                                                 dbHandler.deleteContact(infos.get(position));
                                                 infos.remove(position);
                                                 adapter.notifyDataSetChanged();
-                                                Toast.makeText(getApplicationContext(), "Successfully Deleted", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(getApplicationContext(), "Item Successfully Deleted!", Toast.LENGTH_SHORT).show();
+
 
                                             }
                                         });
@@ -300,7 +352,8 @@ public class MainActivity extends Activity  {
 
 
 
-                                    editAlert.setView(inflater.inflate(R.layout.edit_layout,parent,false));
+                                  editAlert.setView(inflater.inflate(R.layout.edit_layout,parent,false));
+
 
 
                                     editAlert.setPositiveButton("Update",
@@ -309,7 +362,7 @@ public class MainActivity extends Activity  {
                                     {
                                         public void onClick (DialogInterface dialog,int id){
 
-
+                                            Toast.makeText(getApplicationContext(), "Item Successfully Updated!", Toast.LENGTH_SHORT).show();
 
                                     }
                                     }
@@ -321,13 +374,12 @@ public class MainActivity extends Activity  {
                                     editAlert.setNegativeButton("Cancel",
                                             new DialogInterface.OnClickListener()
 
-                                    {
-                                        public void onClick (DialogInterface dialog,int id){
-                                        dialog.cancel();
+                                            {
+                                                public void onClick(DialogInterface dialog, int id) {
+                                                    dialog.cancel();
 
-                                    }
-                                    }
-
+                                                }
+                                            }
                                     );
 
                                     editAlert.setCancelable(true);
@@ -368,6 +420,8 @@ public class MainActivity extends Activity  {
 
 
 
+
+
         contactImageImgView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -378,18 +432,7 @@ public class MainActivity extends Activity  {
                 RadioButton rb1 = (RadioButton)findViewById(R.id.radioButton1);
                 RadioButton rb2 = (RadioButton)findViewById(R.id.radioButton2);
                 RadioButton rb3 = (RadioButton)findViewById(R.id.radioButton3);
-                if(rb1.isChecked())
-                {
-                    rb1.setChecked(false);
-                }
-                if(rb2.isChecked())
-                {
-                    rb2.setChecked(false);
-                }
-                if(rb3.isChecked())
-                {
-                    rb3.setChecked(false);
-                }
+                checked = true;
             }
 
         });
@@ -409,22 +452,22 @@ public class MainActivity extends Activity  {
 
     public void onRadioButtonClicked(View view) {
         // Is the button now checked?
-        boolean checked = ((RadioButton) view).isChecked();
+        boolean check = ((RadioButton) view).isChecked();
 
         // Check which radio button was clicked
         switch(view.getId()) {
             case R.id.radioButton1:
-                if (checked)
+                if (check&&checked==false)
                     contactImageImgView.setImageURI(DecImg);
                 break;
             case R.id.radioButton2:
-                if (checked)
+                if (check&&checked==false)
                     contactImageImgView.setImageURI(PapImg);
                 // Ninjas rule
                 break;
 
             case R.id.radioButton3:
-                if (checked)
+                if (check&&checked==false)
                     contactImageImgView.setImageURI(InkImg);
                 // Ninjas rule
                 break;
@@ -481,6 +524,7 @@ public class MainActivity extends Activity  {
             TextView date = (TextView) view.findViewById(R.id.DateList);
             date.setText(currentInfo.getTime());
 
+
             ImageView ivContactImage = (ImageView) view.findViewById(R.id.ivContactImage);
             ivContactImage.setImageURI(currentInfo.getImageURI());
 
@@ -490,7 +534,34 @@ public class MainActivity extends Activity  {
     }
     @Override
     public void onBackPressed() {
+
+        final AlertDialog.Builder exAlert  = new AlertDialog.Builder(this);
+        exAlert.setPositiveButton("Yes",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        moveTaskToBack(true);
+
+                    }
+                });
+
+        exAlert.setMessage("Are you sure you want to exit?" );
+        exAlert.setTitle("Confirm?");
+        exAlert.setNegativeButton("No",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+
+                    }
+                });
+
+        exAlert.setCancelable(true);
+        exAlert.create().show();
+
+
+
+
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

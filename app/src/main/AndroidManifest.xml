@@ -9,7 +9,7 @@
         android:theme="@android:style/Theme.DeviceDefault.Light.NoActionBar" >
         <activity
             android:name=".MainActivity"
-            android:label="BMS ON THE GO" >
+            android:label="BMS Mobile" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
